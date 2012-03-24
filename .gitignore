@@ -1,9 +1,16 @@
 *~
 
+/js/
+
 # lein {
 
+/.lein-cljsbuild-compiler-0
+/.lein-plugins
+
+# --
+
 /pom.xml
-*jar
+*.jar
 /lib
 /classes
 /native
