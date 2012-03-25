@@ -11,55 +11,63 @@
 
 ; --
 
-(def begin  0 )
-(def end    10)
+(def begin  0)
+(def end    4)
 
 ; --
 
-(def sm (state/machine :state))
+(def st_m (state/machine :state))
+(def st_a (atom nil))  ; !!!!
 
 ; --
 
-(defstate sm :counting
-  (in [n]
-    (inner $counter (str n)) ))
-
-(defstate sm :done
+(defstate st_m :done
   (in []
     (inner $counter "done.") ))
 
+(defstate st_m :counting
+  (in [n]
+    (inner $counter (str n)) ))
+
 ; --
 
-(defn do-set-next [n] )
-; (.click $next (fn [e] (transition sm :next n))) )
+(defn do-inc-value []
+  (swap! st_a inc) )
+
+(defn do-set-value [n]
+  (swap! st_a (constantly n)) )
 
 ; --
 
 (defn do-trans-counting [n]
-  (state/set sm :counting n)
-  (do-set-next (inc n)) )
+  (when (= n begin)
+    (state/unset st_m :done) )
+  (state/set st_m :counting n)
+  (do-inc-value) )
 
 (defn do-trans-done []
-  (state/set sm :done)
-  (do-set-next begin) )
+  (state/unset st_m :counting)
+  (state/set st_m :done)
+  (do-set-value begin) )
 
 ; --
 
-(deftrans sm :begin []
+(deftrans st_m :begin []
   (do-trans-counting begin) )
 
-(deftrans sm :next [n]
+(deftrans st_m :next [n]
   (if (= n end)
     (do-trans-done)
-    (do-trans-counting n) ))
+    (do-trans-counting) ))
 
 ; --
 
-(defn do-init
+(defn do-init []
   (def $counter ($ :#counter))  ; !!!!
   (def $next    ($ :#next   ))  ; !!!!
 
-  (transition sm :begin) )
+  (transition st_m :begin)
+  (.click $next (fn [e] (transition st_m :next @st_a))) )
 
 ; --
 
