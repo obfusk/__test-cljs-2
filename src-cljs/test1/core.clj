@@ -14,10 +14,9 @@
 (def begin  0 )
 (def end    10)
 
-(def sm (state/machine :state))
+; --
 
-(def $counter ($ :#counter))
-(def $next    ($ :#next   ))
+(def sm (state/machine :state))
 
 ; --
 
@@ -31,8 +30,8 @@
 
 ; --
 
-(defn do-set-next [n]
-  (.click $next #( transition sm :next n )) )
+(defn do-set-next [n] )
+; (.click $next (fn [e] (transition sm :next n))) )
 
 ; --
 
@@ -46,7 +45,7 @@
 
 ; --
 
-(deftrans sm :begin
+(deftrans sm :begin []
   (do-trans-counting begin) )
 
 (deftrans sm :next [n]
@@ -56,6 +55,14 @@
 
 ; --
 
-(transition sm :begin)
+(defn do-init
+  (def $counter ($ :#counter))  ; !!!!
+  (def $next    ($ :#next   ))  ; !!!!
+
+  (transition sm :begin) )
+
+; --
+
+($ do-init)
 
 ; --
