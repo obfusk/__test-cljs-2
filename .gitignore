@@ -1,22 +1,12 @@
 *~
 *.swp
 
+/src-cljs/obfusk
 /www/js/test2.js
 
 # lein {
 
-/.lein-cljsbuild-compiler-0
-/.lein-plugins
-
-# --
-
-/pom.xml
-*.jar
-/lib
-/classes
-/native
-/.lein-failures
-/checkouts
-/.lein-deps-sum
+/.lein-cljsbuild-compiler-0/
+/.lein-plugins/
 
 # } lein
