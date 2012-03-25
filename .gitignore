@@ -1,7 +1,7 @@
 *~
 *.swp
 
-/js/
+/www/js/test2.js
 
 # lein {
 

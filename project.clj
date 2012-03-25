@@ -1,4 +1,4 @@
-(defproject cljs-test-1 "1.0.0-SNAPSHOT"
+(defproject cljs-test-2 "1.0.0-SNAPSHOT"
   :description        "..."
   :source-path        "src-clj"
   :dependencies       [ [ org.clojure/clojure "1.3.0"           ]
@@ -9,7 +9,7 @@
   :cljsbuild { :builds [{
     :source-path      "src-cljs"
     :compiler {
-      :output-to      "js/test1.js"
+      :output-to      "www/js/test2.js"
       :optimizations  :whitespace   ; TODO
       :pretty-print   true
   } }] } )

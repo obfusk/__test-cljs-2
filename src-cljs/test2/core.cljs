@@ -1,4 +1,4 @@
-(ns test1.core
+(ns test2.core
   (:require
 ;   [ crate.core    :as crate ]
     [ waltz.state   :as state ] )
