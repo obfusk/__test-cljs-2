@@ -1,78 +1,62 @@
+; --                                                            ; {{{1
+;
+; File        : test2/core.cljs
+; Maintainer  : Felix C. Stegerman <flx@obfusk.net>
+; Date        : 2012-03-25
+;
+; Copyright   : Copyright (C) 2012  Felix C. Stegerman
+; Licence     : GPLv2 or EPLv1
+;
+; Depends     : ...
+; Description : ...
+;
+; TODO        : ...
+;
+; --                                                            ; }}}1
+
 (ns test2.core
-  (:require
-;   [ crate.core    :as crate ]
-    [ waltz.state   :as state ] )
-  (:use
-    [ jayq.core     :only [ $           ] ]
-    [ waltz.state   :only [ transition  ] ] )
-  (:use-macros
-;   [ crate.macros  :only [ defpartial            ] ]
-    [ waltz.macros  :only [ in defstate deftrans  ] ] ) )
+  (:use [ jayq.core         :only [ $         ] ]
+        [ obfusk.cljs.trans :only [ do-trans  ] ]) )
 
 ; --
 
 (def begin  0)
-(def end    4)
+(def end    3)
+
+(def _st_ (atom { :DEBUG false, :n 0 }))                        ; !!!!
 
 ; --
 
-(def st_m (state/machine :state))
-(def st_a (atom nil))  ; !!!!
+(defn tr-next [{ :keys [ n ] :as st }]                          ; {{{1
+  (merge st
+    (if (= n end)
+      { :n begin  , :counter-text "done."     }
+      { :n (inc n), :counter-text (str "#" n) } )))
+                                                                ; }}}1
 
 ; --
 
-(defn do-inc-st_a []
-  (swap! st_a inc) )
+(defn do-update [{ :keys [ counter-text ] }]
+  (.text $counter counter-text) )
+  ; $counter is defined in do-init
 
-(defn do-set-st_a [n]
-  (swap! st_a (constantly n)) )
 
-; --
+(defn do-next []
+  (do-trans _st_ tr-next do-update) )
 
-(defstate st_m :done
-  (in []
-    (.html $counter "done.") ))
 
-(defstate st_m :counting
-  (in [n]
-    (.html $counter (str "#" n)) ))
+(defn do-init []                                                ; {{{1
+  (def $counter ($ :#counter))
+  (def $next    ($ :#next   ))
 
-; --
-
-(defn do-trans-counting [n]
-  (when (= n begin)
-    (state/unset st_m :done) )
-  (state/set st_m :counting n)
-  (do-inc-st_a) )
-
-(defn do-trans-done []
-  (state/unset st_m :counting)
-  (state/set st_m :done)
-  (do-set-st_a begin) )
-
-; --
-
-(deftrans st_m :begin []
-  (do-trans-counting begin) )
-
-(deftrans st_m :next [n]
-  (if (= n end)
-    (do-trans-done)
-    (do-trans-counting n) ))
-
-; --
-
-(defn do-init []
-  (def $counter ($ :#counter))  ; !!!!
-  (def $next    ($ :#next   ))  ; !!!!
-
-  ; (state/assoc-sm st_m [:debug] false)  ; BUG !!!!
-
-  (transition st_m :begin)
-  (.click $next (fn [e] (transition st_m :next @st_a))) )
+  (do-next)
+  (.click $next (fn [e] (do-next))) )
+                                                                ; }}}1
 
 ; --
 
 ($ do-init)
 
 ; --
+
+; vim: set tw=70 sw=2 sts=2 et fdm=marker :
