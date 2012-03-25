@@ -3,11 +3,11 @@
 ;   [ crate.core    :as crate ]
     [ waltz.state   :as state ] )
   (:use
-    [ jayq.core     :only [ $ inner     ] ]
+    [ jayq.core     :only [ $           ] ]
     [ waltz.state   :only [ transition  ] ] )
   (:use-macros
-;   [ crate.macros  :only [ defpartial                ] ]
-    [ waltz.macros  :only [ in out defstate deftrans  ] ] ) )
+;   [ crate.macros  :only [ defpartial            ] ]
+    [ waltz.macros  :only [ in defstate deftrans  ] ] ) )
 
 ; --
 
@@ -21,21 +21,21 @@
 
 ; --
 
-(defstate st_m :done
-  (in []
-    (inner $counter "done.") ))
+(defn do-inc-st_a []
+  (swap! st_a inc) )
 
-(defstate st_m :counting
-  (in [n]
-    (inner $counter (str n)) ))
+(defn do-set-st_a [n]
+  (swap! st_a (constantly n)) )
 
 ; --
 
-(defn do-inc-value []
-  (swap! st_a inc) )
+(defstate st_m :done
+  (in []
+    (.html $counter "done.") ))
 
-(defn do-set-value [n]
-  (swap! st_a (constantly n)) )
+(defstate st_m :counting
+  (in [n]
+    (.html $counter (str "#" n)) ))
 
 ; --
 
@@ -43,12 +43,12 @@
   (when (= n begin)
     (state/unset st_m :done) )
   (state/set st_m :counting n)
-  (do-inc-value) )
+  (do-inc-st_a) )
 
 (defn do-trans-done []
   (state/unset st_m :counting)
   (state/set st_m :done)
-  (do-set-value begin) )
+  (do-set-st_a begin) )
 
 ; --
 
@@ -58,13 +58,15 @@
 (deftrans st_m :next [n]
   (if (= n end)
     (do-trans-done)
-    (do-trans-counting) ))
+    (do-trans-counting n) ))
 
 ; --
 
 (defn do-init []
   (def $counter ($ :#counter))  ; !!!!
   (def $next    ($ :#next   ))  ; !!!!
+
+  ; (state/assoc-sm st_m [:debug] false)  ; BUG !!!!
 
   (transition st_m :begin)
   (.click $next (fn [e] (transition st_m :next @st_a))) )
