@@ -8,6 +8,6 @@
     :source-path      "src-cljs"
     :compiler {
       :output-to      "www/js/test2.js"
-      :optimizations  :whitespace   ; TODO
+      :optimizations  :whitespace                               ; TODO
       :pretty-print   true
   } }] } )
