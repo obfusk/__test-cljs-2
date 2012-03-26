@@ -1,6 +1,8 @@
 *~
 *.swp
 
+/_scripts
+
 /src-cljs/obfusk
 /www/js/test2.js
 

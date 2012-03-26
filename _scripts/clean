@@ -1,6 +1,0 @@
-#!/bin/bash
-
-lein clean
-rm -r .lein-plugins/ lib/
-
-# --
